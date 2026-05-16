@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#6C22E8">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Kiff ✦ Ta surprise t'attend</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    /* ===========================================================
+       KIFF — BASE
+    =========================================================== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary:       #6C22E8;
+      --primary-light: #8B4CF6;
+      --accent:        #FF9F1C;
+      --dark:          #0F0F1A;
+      --dark2:         #1A1A2E;
+      --dark3:         #252542;
+      --surface:       #1E1E36;
+      --border:        rgba(255,255,255,0.08);
+      --text:          #F0EEFF;
+      --muted:         rgba(240,238,255,0.5);
+      --radius:        20px;
+      --radius-sm:     12px;
+    }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      background: var(--dark);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    /* Background glow */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 15% -5%, rgba(108,34,232,.28) 0%, transparent 60%),
+        radial-gradient(ellipse 55% 35% at 85% 105%, rgba(255,159,28,.14) 0%, transparent 55%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ===========================================================
+       SCREENS
+    =========================================================== */
+    #app {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1;
+    }
+
+    .screen {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1.25rem 1.25rem 5rem;
+      overflow-y: auto;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(20px) scale(.98);
+      transition: opacity .3s ease, transform .3s ease;
+    }
+    .screen.active {
+      opacity: 1;
+      pointer-events: all;
+      transform: translateY(0) scale(1);
+    }
+
+    /* ===========================================================
+       CARD
+    =========================================================== */
+    .card {
+      width: 100%;
+      max-width: 420px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2rem 1.75rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+    }
+
+    /* ===========================================================
+       TYPOGRAPHY
+    =========================================================== */
+    .headline {
+      font-size: clamp(1.55rem, 5vw, 1.9rem);
+      font-weight: 900;
+      line-height: 1.15;
+      letter-spacing: -.025em;
+    }
+    .headline .grad {
+      background: linear-gradient(135deg, var(--primary-light), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .sub {
+      font-size: .93rem;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-top: .5rem;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .35rem;
+      padding: .3rem .8rem;
+      background: rgba(108,34,232,.15);
+      border: 1px solid rgba(108,34,232,.3);
+      border-radius: 100px;
+      font-size: .75rem;
+      font-weight: 700;
+      color: var(--primary-light);
+      letter-spacing: .04em;
+      margin-bottom: 1.1rem;
+    }
+
+    /* ===========================================================
+       BUTTONS
+    =========================================================== */
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: .5rem;
+      width: 100%;
+      padding: .95rem 1.4rem;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: .97rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all .18s ease;
+      text-decoration: none;
+      letter-spacing: .01em;
+      white-space: nowrap;
+    }
+    .btn:active { transform: scale(.96); }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: #fff;
+      box-shadow: 0 4px 22px rgba(108,34,232,.42);
+    }
+    .btn-primary:hover { box-shadow: 0 6px 32px rgba(108,34,232,.6); transform: translateY(-1px); }
+    .btn-ghost  { background: var(--border); color: var(--muted); }
+    .btn-ghost:hover { background: rgba(255,255,255,.1); color: var(--text); }
+    .btn-outline { background: transparent; color: var(--text); border: 1px solid var(--border); }
+    .btn-sm { padding: .6rem 1.1rem; font-size: .83rem; }
+    .btn-google { background: #fff; color: #3C4043; }
+    .btn-insta  { background: linear-gradient(135deg,#833AB4,#FD1D1D,#F77737); color: #fff; }
+    .btn-tiktok { background: #000; color: #fff; border: 1px solid rgba(255,255,255,.1); }
+    .btn-share  { background: linear-gradient(135deg,#22C55E,#16A34A); color: #fff; }
+
+    /* ===========================================================
+       INPUTS
+    =========================================================== */
+    .field { margin-bottom: 1rem; }
+    .field label {
+      display: block;
+      font-size: .73rem;
+      font-weight: 700;
+      letter-spacing: .09em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: .45rem;
+    }
+    .field input {
+      width: 100%;
+      background: var(--dark2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: .85rem 1rem;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: .97rem;
+      color: var(--text);
+      outline: none;
+      transition: border-color .2s;
+    }
+    .field input:focus { border-color: var(--primary-light); }
+    .field input::placeholder { color: var(--muted); }
+
+    /* ===========================================================
+       SHOP LOGO
+    =========================================================== */
+    .shop-logo {
+      width: 68px; height: 68px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem; font-weight: 900; color: #fff;
+      margin: 0 auto 1.2rem;
+      box-shadow: 0 8px 30px rgba(108,34,232,.42);
+    }
+    .shop-name {
+      font-size: 1.05rem; font-weight: 800;
+      text-align: center; margin-bottom: .2rem;
+    }
+    .shop-slogan { font-size: .82rem; color: var(--muted); text-align: center; margin-bottom: 1.6rem; }
+
+    /* ===========================================================
+       SCRATCH CARD
+    =========================================================== */
+    #scratch-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 340px;
+      margin: 0 auto 1rem;
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    #scratch-reveal {
+      width: 100%;
+      aspect-ratio: 3 / 2;
+      border-radius: var(--radius);
+      background: var(--dark2);
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: .5rem;
+    }
+    #scratch-reveal .r-icon  { font-size: 3.2rem; line-height: 1; }
+    #scratch-reveal .r-label { font-size: 1rem; font-weight: 800; text-align: center; padding: 0 1rem; }
+    #scratch-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%; height: 100%;
+      border-radius: var(--radius);
+      cursor: crosshair;
+      touch-action: none;
+    }
+    #tap-reveal-btn {
+      display: none;
+      font-size: .78rem;
+      color: var(--muted);
+      text-align: center;
+      margin-top: .4rem;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    /* ===========================================================
+       RESULT
+    =========================================================== */
+    .result-top { text-align: center; padding: .8rem 0 1.2rem; }
+    .result-icon { font-size: 4.5rem; line-height: 1; display: block; animation: popIn .5s cubic-bezier(.34,1.56,.64,1) both; margin-bottom: .6rem; }
+    .result-title { font-size: 1.5rem; font-weight: 900; }
+    .rare-badge {
+      display: inline-block;
+      padding: .2rem .7rem;
+      background: linear-gradient(135deg,#FFD700,#FF9F1C);
+      color: #1A1A2E;
+      border-radius: 100px;
+      font-size: .68rem; font-weight: 800;
+      letter-spacing: .06em; text-transform: uppercase;
+      margin-bottom: .5rem;
+    }
+    .coupon-box {
+      background: var(--dark2);
+      border: 2px dashed rgba(255,255,255,.13);
+      border-radius: var(--radius-sm);
+      padding: 1.1rem;
+      text-align: center;
+      margin: 1rem 0 .6rem;
+    }
+    .coupon-lbl { font-size: .68rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: .4rem; }
+    .coupon-code { font-size: 1.75rem; font-weight: 900; letter-spacing: .14em; color: var(--accent); }
+    .coupon-exp  { font-size: .72rem; color: var(--muted); margin-top: .35rem; }
+
+    .social-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: .65rem;
+      margin-top: .8rem;
+    }
+
+    /* ===========================================================
+       RETURN SCREEN
+    =========================================================== */
+    .timer-box {
+      background: var(--dark2);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      padding: 1.2rem;
+      text-align: center;
+      margin: 1rem 0 1.2rem;
+    }
+    .timer-lbl { font-size: .72rem; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-bottom: .4rem; }
+    .timer-val {
+      font-size: 2.4rem; font-weight: 900;
+      background: linear-gradient(135deg, var(--primary-light), var(--accent));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .streak-pill {
+      display: inline-flex; align-items: center; gap: .45rem;
+      padding: .45rem 1.1rem;
+      background: rgba(255,159,28,.1);
+      border: 1px solid rgba(255,159,28,.25);
+      border-radius: 100px;
+      font-size: .88rem; font-weight: 700; color: var(--accent);
+      margin-bottom: 1rem;
+    }
+
+    /* ===========================================================
+       ADMIN
+    =========================================================== */
+    #screen-admin { justify-content: flex-start; padding-top: 2rem; }
+    .admin-wrap { width: 100%; max-width: 600px; }
+    .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.4rem; }
+    .admin-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: .6rem;
+      margin-bottom: 1.2rem;
+    }
+    .stat-box {
+      background: var(--dark2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: .9rem .7rem;
+      text-align: center;
+    }
+    .stat-num {
+      font-size: 1.9rem; font-weight: 900;
+      background: linear-gradient(135deg, var(--primary-light), var(--accent));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .stat-lbl { font-size: .65rem; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+    .table-wrap {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      overflow: auto;
+      max-height: 280px;
+      margin-bottom: 1rem;
+    }
+    table { width: 100%; border-collapse: collapse; font-size: .8rem; }
+    th {
+      background: var(--dark3); color: var(--muted);
+      font-weight: 700; padding: .65rem .8rem; text-align: left;
+      font-size: .67rem; text-transform: uppercase; letter-spacing: .06em;
+      position: sticky; top: 0; white-space: nowrap;
+    }
+    td { padding: .6rem .8rem; border-bottom: 1px solid var(--border); }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(255,255,255,.025); }
+    .admin-btns { display: flex; gap: .6rem; flex-wrap: wrap; }
+
+    /* ===========================================================
+       MISC
+    =========================================================== */
+    #confetti-canvas {
+      position: fixed; inset: 0;
+      pointer-events: none; z-index: 999; display: none;
+    }
+    #particles {
+      position: fixed; inset: 0;
+      pointer-events: none; z-index: 0;
+    }
+    #toast {
+      position: fixed; bottom: 4.5rem; left: 50%;
+      transform: translateX(-50%) translateY(16px);
+      background: var(--dark3); border: 1px solid var(--border);
+      color: var(--text); padding: .65rem 1.3rem;
+      border-radius: 100px; font-size: .85rem; font-weight: 600;
+      z-index: 1000; opacity: 0; transition: all .25s ease;
+      white-space: nowrap; pointer-events: none;
+    }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .kiff-footer {
+      position: fixed; bottom: 1rem; left: 50%; transform: translateX(-50%);
+      font-size: .68rem; color: rgba(255,255,255,.2);
+      letter-spacing: .08em; z-index: 10; white-space: nowrap;
+      cursor: default;
+    }
+    .kiff-footer b { color: rgba(139,76,246,.6); }
+    .divider {
+      display: flex; align-items: center; gap: .7rem;
+      color: var(--muted); font-size: .75rem; margin: .9rem 0;
+    }
+    .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+    .back { position: absolute; top: 1.1rem; left: 1.1rem; font-size: .82rem; color: var(--muted); cursor: pointer; z-index: 5; }
+    .back:hover { color: var(--text); }
+
+    /* ===========================================================
+       ANIMATIONS
+    =========================================================== */
+    @keyframes popIn  { from { transform: scale(.4); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    @keyframes float  { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+    @keyframes pulseGlow {
+      0%,100% { box-shadow: 0 4px 22px rgba(108,34,232,.42); }
+      50%      { box-shadow: 0 4px 38px rgba(108,34,232,.7); }
+    }
+    .float { animation: float 3s ease-in-out infinite; }
+    .pulse-glow { animation: pulseGlow 2s ease-in-out infinite; }
+
+    @media (max-height: 680px) { .card { padding: 1.4rem 1.25rem; } }
+    @media (min-width: 480px) { .card { padding: 2.4rem 2.4rem; } }
+  </style>
+</head>
+<body>
+
+<!-- Confetti -->
+<canvas id="confetti-canvas"></canvas>
+<!-- Background particles -->
+<canvas id="particles"></canvas>
+<!-- Toast -->
+<div id="toast"></div>
+<!-- Kiff brand -->
+<div class="kiff-footer" id="kiff-footer">Propulsé par <b>Kiff</b> ✦ La fidélité réinventée</div>
+
+<div id="app">
+
+  <!-- =========================================================
+       SCREEN 1 — LANDING
+  ========================================================= -->
+  <div class="screen active" id="screen-landing">
+    <div class="card">
+      <div class="shop-logo" id="landing-logo">TC</div>
+      <div class="shop-name" id="landing-name">Tacos City</div>
+      <div class="shop-slogan" id="landing-slogan">Le meilleur du quartier</div>
+
+      <div style="text-align:center; margin-bottom:1.8rem">
+        <div class="badge">✦ Gratuit · 30 secondes · Sans spam</div>
+        <h1 class="headline" style="text-align:center">
+          Ta surprise<br><span class="grad">t'attend ici</span>
+        </h1>
+        <p class="sub" style="text-align:center">Scanne, joue et gagne une vraie récompense à utiliser aujourd'hui.</p>
+      </div>
+
+      <button class="btn btn-primary pulse-glow" id="btn-start" style="font-size:1.05rem; padding:1.05rem">
+        Jouer maintenant ✦
+      </button>
+
+      <p style="text-align:center; font-size:.72rem; color:var(--muted); margin-top:.9rem; line-height:1.5">
+        1 participation par jour · Données non partagées
+      </p>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       SCREEN 2 — REGISTER
+  ========================================================= -->
+  <div class="screen" id="screen-register">
+    <span class="back" onclick="showScreen('screen-landing')">← Retour</span>
+    <div class="card">
+      <div style="margin-bottom:1.4rem">
+        <div class="badge">Étape 1 / 2</div>
+        <h2 class="headline">On joue ?</h2>
+        <p class="sub">Entre ton prénom et ton email pour recevoir ta récompense.</p>
+      </div>
+
+      <form id="register-form">
+        <div class="field">
+          <label for="inp-name">Ton prénom</label>
+          <input type="text" id="inp-name" placeholder="Prénom" required autocomplete="given-name">
+        </div>
+        <div class="field">
+          <label for="inp-email">Ton email</label>
+          <input type="email" id="inp-email" placeholder="email@exemple.fr" required autocomplete="email">
+        </div>
+        <button type="submit" class="btn btn-primary" style="margin-top:.4rem">
+          C'est parti →
+        </button>
+      </form>
+
+      <p style="text-align:center; font-size:.7rem; color:var(--muted); margin-top:.9rem; line-height:1.55">
+        1 participation / jour / email · RGPD · Données non partagées
+      </p>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       SCREEN 3 — GAME (SCRATCH CARD)
+  ========================================================= -->
+  <div class="screen" id="screen-game">
+    <div class="card">
+      <div style="margin-bottom:1.1rem; text-align:center">
+        <div class="badge">Étape 2 / 2</div>
+        <h2 class="headline">Gratte ta carte !</h2>
+        <p class="sub">Glisse ton doigt pour découvrir ta surprise</p>
+      </div>
+
+      <div id="scratch-wrapper">
+        <div id="scratch-reveal">
+          <span class="r-icon" id="sc-icon">🎁</span>
+          <span class="r-label" id="sc-label">Ta surprise</span>
+        </div>
+        <canvas id="scratch-canvas"></canvas>
+      </div>
+
+      <p class="float" style="text-align:center; font-size:.82rem; color:var(--muted); margin-top:.6rem">
+        ☝️ Gratte ici pour révéler
+      </p>
+      <p id="tap-reveal-btn" onclick="forceReveal()">Tout révéler d'un coup</p>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       SCREEN 4 — RESULT
+  ========================================================= -->
+  <div class="screen" id="screen-result">
+    <div class="card">
+      <div class="result-top">
+        <div id="rare-badge" style="display:none"><span class="rare-badge">Rare !</span></div>
+        <span class="result-icon" id="res-icon">🎉</span>
+        <p style="font-size:.73rem; color:var(--muted); text-transform:uppercase; letter-spacing:.1em; font-weight:700">Tu as gagné</p>
+        <h2 class="headline result-title" id="res-label">—</h2>
+      </div>
+
+      <div class="coupon-box" id="coupon-box">
+        <div class="coupon-lbl">Ton code récompense</div>
+        <div class="coupon-code" id="coupon-code">KIFF-XXXX</div>
+        <div class="coupon-exp" id="coupon-exp">Montre ce code au comptoir aujourd'hui</div>
+      </div>
+
+      <button class="btn btn-ghost btn-sm" onclick="copyCode()" style="margin-bottom:.8rem">
+        Copier le code
+      </button>
+
+      <div class="divider">Partage ta victoire</div>
+
+      <div class="social-grid" id="res-socials"></div>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       SCREEN 5 — ALREADY PLAYED
+  ========================================================= -->
+  <div class="screen" id="screen-return">
+    <div class="card" style="text-align:center">
+      <div class="float" style="font-size:3.5rem; margin-bottom:.9rem">🌙</div>
+      <h2 class="headline" style="margin-bottom:.4rem">T'as déjà joué !</h2>
+      <p class="sub" style="margin-bottom:1.3rem">Une seule surprise par jour. Reviens demain pour une nouvelle chance !</p>
+
+      <div id="streak-pill" style="display:none" class="streak-pill">
+        🔥 <span id="streak-val">0</span> jours de suite — continue !
+      </div>
+
+      <div class="timer-box">
+        <div class="timer-lbl">Prochain tour dans</div>
+        <div class="timer-val" id="timer-val">00h 00min</div>
+      </div>
+
+      <div class="social-grid" id="ret-socials"></div>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       SCREEN 6 — ADMIN LOGIN
+  ========================================================= -->
+  <div class="screen" id="screen-admin-login">
+    <div class="card" style="max-width:360px">
+      <h2 class="headline" style="margin-bottom:.4rem">Espace admin</h2>
+      <p class="sub" style="margin-bottom:1.4rem">Accès réservé au commerçant</p>
+      <div class="field">
+        <label>Mot de passe</label>
+        <input type="password" id="admin-pwd" placeholder="••••••••">
+      </div>
+      <button class="btn btn-primary" id="btn-admin-login" style="margin-bottom:.7rem">Accéder →</button>
+      <button class="btn btn-ghost btn-sm" onclick="showScreen('screen-landing')">Retour</button>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       SCREEN 7 — ADMIN DASHBOARD
+  ========================================================= -->
+  <div class="screen" id="screen-admin">
+    <div class="admin-wrap">
+      <div class="admin-header">
+        <div>
+          <h2 class="headline" style="font-size:1.35rem">Dashboard Kiff</h2>
+          <p class="sub" id="admin-shop">—</p>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="showScreen('screen-landing')" style="width:auto; padding:.55rem 1rem">
+          ← Quitter
+        </button>
+      </div>
+
+      <div class="admin-stats">
+        <div class="stat-box">
+          <div class="stat-num" id="a-total">0</div>
+          <div class="stat-lbl">Participations</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num" id="a-emails">0</div>
+          <div class="stat-lbl">Emails uniques</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num" id="a-today">0</div>
+          <div class="stat-lbl">Aujourd'hui</div>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Prénom</th><th>Email</th><th>Récompense</th><th>Code</th><th>Date</th>
+            </tr>
+          </thead>
+          <tbody id="admin-tbody">
+            <tr><td colspan="5" style="text-align:center;color:var(--muted);padding:2rem">Aucune participation</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="admin-btns">
+        <button class="btn btn-primary btn-sm" onclick="exportJSON()" style="flex:1">Exporter JSON</button>
+        <button class="btn btn-outline btn-sm" onclick="copyEmails()" style="flex:1">Copier emails</button>
+        <button class="btn btn-ghost btn-sm" onclick="clearAll()" style="flex:1">Effacer tout</button>
+      </div>
+
+      <p style="font-size:.68rem; color:var(--muted); text-align:center; margin-top:1.4rem; padding-bottom:3rem">
+        Données stockées localement (localStorage) · Kiff Admin
+      </p>
+    </div>
+  </div>
+
+</div><!-- #app -->
+
+
+<script>
+/* ===========================================================
+   CONFIGURATION — PERSONNALISE ICI TON COMMERCE
+   =========================================================
+   Seule cette zone est à modifier pour adapter Kiff
+   à un nouveau commerce. Le reste du code ne change pas.
+=========================================================== */
+const SHOP_CONFIG = {
+
+  /* Identité */
+  name:        "Tacos City",
+  slogan:      "Le meilleur du quartier, à chaque passage",
+  logoText:    "TC",          // initiales affichées si pas de logo image
+  logoUrl:     null,          // URL image logo (optionnel — null = logoText)
+
+  /* Couleurs (null = couleurs Kiff par défaut) */
+  primaryColor: null,         // ex: "#E63946"
+  accentColor:  null,         // ex: "#FF9F1C"
+
+  /* Liens réseaux sociaux */
+  googleReviewUrl: "https://g.page/r/VOTRE_ID/review",
+  instagramUrl:    "https://instagram.com/VOTRE_COMPTE",
+  tiktokUrl:       "https://tiktok.com/@VOTRE_COMPTE",
+  shareText:       "J'ai eu une surprise chez Tacos City ! Scanne leur QR code",
+
+  /* Admin */
+  adminPassword: "kiff2024",  // CHANGER avant de déployer !
+
+  /* Récompenses — total des probabilités doit = 100
+     noReward:true = le joueur ne gagne rien ce tour */
+  rewards: [
+    { id:"boisson",  label:"Boisson offerte",       icon:"🥤", probability:26, color:"#22D3EE", rare:false },
+    { id:"remise10", label:"-10% sur ta commande",  icon:"💰", probability:26, color:"#A78BFA", rare:false },
+    { id:"cafe",     label:"Café ou thé offert",    icon:"☕", probability:20, color:"#FF9F1C", rare:false },
+    { id:"remise20", label:"-20% sur ta commande",  icon:"🔥", probability:12, color:"#F43F5E", rare:false },
+    { id:"dessert",  label:"Dessert offert",        icon:"🍰", probability:8,  color:"#34D399", rare:false },
+    { id:"menu",     label:"Menu offert !",         icon:"⭐", probability:3,  color:"#FFD700", rare:true  },
+    { id:"retry",    label:"Reviens demain !",      icon:"🌙", probability:5,  color:"#94A3B8", rare:false, noReward:true }
+  ]
+
+};
+/* ===========================================================
+   FIN DE LA CONFIGURATION
+=========================================================== */
+
+
+/* ===========================================================
+   CORE
+=========================================================== */
+const DB_KEY = 'kiff_data_v1';
+let state = { user: null, reward: null, code: null, scratchCard: null };
+
+/* Apply SHOP_CONFIG to DOM */
+function applyConfig() {
+  document.title = SHOP_CONFIG.name + ' ✦ Ta surprise t\'attend';
+  document.getElementById('landing-name').textContent   = SHOP_CONFIG.name;
+  document.getElementById('landing-slogan').textContent = SHOP_CONFIG.slogan;
+  document.getElementById('admin-shop').textContent     = SHOP_CONFIG.name;
+
+  const logo = document.getElementById('landing-logo');
+  if (SHOP_CONFIG.logoUrl) {
+    logo.innerHTML = '<img src="' + SHOP_CONFIG.logoUrl + '" alt="' + SHOP_CONFIG.name + '" style="width:52px;height:52px;object-fit:contain;border-radius:12px">';
+  } else {
+    logo.textContent = SHOP_CONFIG.logoText;
+  }
+
+  if (SHOP_CONFIG.primaryColor) {
+    document.documentElement.style.setProperty('--primary', SHOP_CONFIG.primaryColor);
+    document.documentElement.style.setProperty('--primary-light', SHOP_CONFIG.primaryColor + 'cc');
+  }
+  if (SHOP_CONFIG.accentColor) {
+    document.documentElement.style.setProperty('--accent', SHOP_CONFIG.accentColor);
+  }
+}
+
+/* Screen navigation */
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  var t = document.getElementById(id);
+  if (t) requestAnimationFrame(function() { t.classList.add('active'); });
+}
+
+/* localStorage helpers */
+function getData() {
+  try { return JSON.parse(localStorage.getItem(DB_KEY)) || { participants: [] }; }
+  catch(e) { return { participants: [] }; }
+}
+function saveData(d) { localStorage.setItem(DB_KEY, JSON.stringify(d)); }
+
+function hasPlayedToday(email) {
+  var today = new Date().toDateString();
+  return getData().participants.some(function(p) {
+    return p.email.toLowerCase() === email.toLowerCase() &&
+           new Date(p.date).toDateString() === today;
+  });
+}
+
+function saveEntry(name, email, reward, code) {
+  var d = getData();
+  d.participants.push({
+    name: name, email: email,
+    reward: reward.label, rewardId: reward.id,
+    code: code || null, noReward: !!reward.noReward,
+    date: new Date().toISOString(), shop: SHOP_CONFIG.name
+  });
+  saveData(d);
+}
+
+/* Streak */
+function getStreak(email) {
+  var entries = getData().participants
+    .filter(function(p) { return p.email.toLowerCase() === email.toLowerCase(); })
+    .sort(function(a,b) { return new Date(b.date) - new Date(a.date); });
+  if (!entries.length) return 0;
+  var streak = 1, prev = new Date(entries[0].date);
+  for (var i = 1; i < entries.length; i++) {
+    var diff = Math.round((prev - new Date(entries[i].date)) / 86400000);
+    if (diff === 1) { streak++; prev = new Date(entries[i].date); } else break;
+  }
+  return streak;
+}
+
+/* Weighted reward selection */
+function pickReward() {
+  var total = SHOP_CONFIG.rewards.reduce(function(s,r) { return s + r.probability; }, 0);
+  var rand  = Math.random() * total;
+  for (var i = 0; i < SHOP_CONFIG.rewards.length; i++) {
+    rand -= SHOP_CONFIG.rewards[i].probability;
+    if (rand <= 0) return SHOP_CONFIG.rewards[i];
+  }
+  return SHOP_CONFIG.rewards[0];
+}
+
+/* Coupon code generator */
+function makeCode() {
+  var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  var c = 'KIFF-';
+  for (var i = 0; i < 4; i++) c += chars[Math.floor(Math.random() * chars.length)];
+  return c;
+}
+
+/* Timer until midnight */
+function updateTimer() {
+  var now = new Date(), end = new Date();
+  end.setHours(24,0,0,0);
+  var ms = end - now;
+  var h  = Math.floor(ms / 3600000);
+  var m  = Math.floor((ms % 3600000) / 60000);
+  var el = document.getElementById('timer-val');
+  if (el) el.textContent = pad(h) + 'h ' + pad(m) + 'min';
+}
+function pad(n) { return n < 10 ? '0' + n : String(n); }
+
+/* Toast */
+function toast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 2600);
+}
+
+/* Copy code */
+function copyCode() {
+  if (!state.code) return;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(state.code).then(function() { toast('Code copié !'); });
+  } else { toast(state.code); }
+}
+
+/* XSS-safe escape */
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+/* Build social buttons */
+function buildSocials(containerId) {
+  var el = document.getElementById(containerId);
+  if (!el) return;
+  el.innerHTML = [
+    '<a href="' + SHOP_CONFIG.googleReviewUrl + '" target="_blank" rel="noopener" class="btn btn-google btn-sm">⭐ Avis Google</a>',
+    '<a href="' + SHOP_CONFIG.instagramUrl + '" target="_blank" rel="noopener" class="btn btn-insta btn-sm">Instagram</a>',
+    '<a href="' + SHOP_CONFIG.tiktokUrl + '" target="_blank" rel="noopener" class="btn btn-tiktok btn-sm">TikTok</a>',
+    navigator.share
+      ? '<button class="btn btn-share btn-sm" onclick="doShare()">Partager 🎉</button>'
+      : '<button class="btn btn-ghost btn-sm" onclick="toast(\'Partage non disponible\')">Partager</button>'
+  ].join('');
+}
+
+function doShare() {
+  if (navigator.share) navigator.share({ text: SHOP_CONFIG.shareText });
+}
+
+/* ===========================================================
+   SCRATCH CARD
+=========================================================== */
+function ScratchCard(canvas, onDone) {
+  var self    = this;
+  var ctx     = canvas.getContext('2d');
+  var drawing = false;
+  var done    = false;
+  var dpr     = window.devicePixelRatio || 1;
+
+  /* Size the canvas to match its CSS display size */
+  var rect   = canvas.getBoundingClientRect();
+  canvas.width  = rect.width  * dpr;
+  canvas.height = rect.height * dpr;
+
+  /* Draw scratch layer */
+  var grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+  grad.addColorStop(0,   '#1E1E36');
+  grad.addColorStop(.5,  '#2D2D52');
+  grad.addColorStop(1,   '#1A1A2E');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  /* Dot texture */
+  ctx.fillStyle = 'rgba(255,255,255,.04)';
+  for (var x = 0; x < canvas.width; x += 16) {
+    for (var y = 0; y < canvas.height; y += 16) {
+      ctx.beginPath();
+      ctx.arc(x, y, 1.5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  /* Stars */
+  ctx.fillStyle = 'rgba(255,255,255,.07)';
+  ctx.font = (14 * dpr) + 'px sans-serif';
+  for (var i = 0; i < 6; i++) {
+    ctx.fillText('✦', Math.random() * canvas.width, Math.random() * canvas.height);
+  }
+
+  /* Center instruction text */
+  ctx.textAlign = 'center';
+  ctx.fillStyle = 'rgba(255,255,255,.55)';
+  ctx.font = 'bold ' + (17 * dpr) + 'px Plus Jakarta Sans, sans-serif';
+  ctx.fillText('✦  Gratte ici  ✦', canvas.width / 2, canvas.height / 2 - 10 * dpr);
+  ctx.fillStyle = 'rgba(255,255,255,.3)';
+  ctx.font = (12 * dpr) + 'px Plus Jakarta Sans, sans-serif';
+  ctx.fillText('Glisse ton doigt', canvas.width / 2, canvas.height / 2 + 16 * dpr);
+
+  function getPos(e) {
+    var r  = canvas.getBoundingClientRect();
+    var sx = canvas.width  / r.width;
+    var sy = canvas.height / r.height;
+    return { x: (e.clientX - r.left) * sx, y: (e.clientY - r.top) * sy };
+  }
+
+  function erase(x, y) {
+    ctx.globalCompositeOperation = 'destination-out';
+    ctx.beginPath();
+    ctx.arc(x, y, 38 * dpr, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.globalCompositeOperation = 'source-over';
+    checkReveal();
+  }
+
+  function checkReveal() {
+    if (done) return;
+    var data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+    var transparent = 0;
+    for (var i = 3; i < data.length; i += 4) {
+      if (data[i] < 128) transparent++;
+    }
+    if (transparent / (canvas.width * canvas.height) > 0.55) complete();
+  }
+
+  function complete() {
+    if (done) return;
+    done = true;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    setTimeout(onDone, 500);
+  }
+
+  self.forceReveal = complete;
+
+  /* Mouse */
+  canvas.addEventListener('mousedown',  function(e) { drawing = true; erase.apply(null, [getPos(e).x, getPos(e).y]); });
+  canvas.addEventListener('mousemove',  function(e) { if (drawing) erase(getPos(e).x, getPos(e).y); });
+  canvas.addEventListener('mouseup',    function() { drawing = false; });
+  canvas.addEventListener('mouseleave', function() { drawing = false; });
+  /* Touch */
+  canvas.addEventListener('touchstart', function(e) {
+    e.preventDefault(); drawing = true;
+    var t = e.touches[0], r = canvas.getBoundingClientRect();
+    erase((t.clientX - r.left) * (canvas.width / r.width), (t.clientY - r.top) * (canvas.height / r.height));
+  }, { passive: false });
+  canvas.addEventListener('touchmove', function(e) {
+    e.preventDefault();
+    if (!drawing) return;
+    var t = e.touches[0], r = canvas.getBoundingClientRect();
+    erase((t.clientX - r.left) * (canvas.width / r.width), (t.clientY - r.top) * (canvas.height / r.height));
+  }, { passive: false });
+  canvas.addEventListener('touchend', function() { drawing = false; });
+}
+
+function forceReveal() {
+  if (state.scratchCard) state.scratchCard.forceReveal();
+}
+
+/* ===========================================================
+   CONFETTI
+=========================================================== */
+function launchConfetti() {
+  var canvas = document.getElementById('confetti-canvas');
+  var ctx    = canvas.getContext('2d');
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight;
+  canvas.style.display = 'block';
+
+  var cols  = ['#6C22E8','#FF9F1C','#22D3EE','#F43F5E','#34D399','#FFD700','#A78BFA','#fff'];
+  var parts = [];
+  for (var i = 0; i < 200; i++) {
+    parts.push({
+      x: Math.random() * canvas.width,
+      y: -20 - Math.random() * 120,
+      r: Math.random() * 7 + 3,
+      col: cols[i % cols.length],
+      vx: (Math.random() - .5) * 5,
+      vy: Math.random() * 3 + 2,
+      rot: Math.random() * 360,
+      rv: (Math.random() - .5) * 8,
+      op: 1,
+      rect: Math.random() > .5
+    });
+  }
+
+  var frame = 0;
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    parts.forEach(function(p) {
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot * Math.PI / 180);
+      ctx.globalAlpha = Math.max(0, p.op);
+      ctx.fillStyle = p.col;
+      if (p.rect) { ctx.fillRect(-p.r/2, -p.r/2, p.r, p.r * 1.8); }
+      else { ctx.beginPath(); ctx.arc(0,0,p.r/2,0,Math.PI*2); ctx.fill(); }
+      ctx.restore();
+      p.x  += p.vx; p.y += p.vy; p.vy += .1;
+      p.rot += p.rv; p.op -= .005;
+    });
+    if (++frame < 240) requestAnimationFrame(draw);
+    else canvas.style.display = 'none';
+  }
+  draw();
+}
+
+/* ===========================================================
+   BACKGROUND PARTICLES
+=========================================================== */
+function initParticles() {
+  var canvas = document.getElementById('particles');
+  var ctx    = canvas.getContext('2d');
+  function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+  resize();
+  window.addEventListener('resize', resize);
+
+  var dots = [];
+  for (var i = 0; i < 25; i++) {
+    dots.push({
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight,
+      r: Math.random() * 1.8 + .4,
+      vx: (Math.random() - .5) * .25,
+      vy: (Math.random() - .5) * .25,
+      op: Math.random() * .35 + .05
+    });
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    dots.forEach(function(d) {
+      ctx.beginPath();
+      ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(108,34,232,' + d.op + ')';
+      ctx.fill();
+      d.x += d.vx; d.y += d.vy;
+      if (d.x < 0) d.x = canvas.width;
+      if (d.x > canvas.width) d.x = 0;
+      if (d.y < 0) d.y = canvas.height;
+      if (d.y > canvas.height) d.y = 0;
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+/* ===========================================================
+   FLOW: LANDING → REGISTER
+=========================================================== */
+document.getElementById('btn-start').addEventListener('click', function() {
+  showScreen('screen-register');
+});
+
+/* ===========================================================
+   FLOW: REGISTER SUBMIT
+=========================================================== */
+document.getElementById('register-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+  var name  = document.getElementById('inp-name').value.trim();
+  var email = document.getElementById('inp-email').value.trim().toLowerCase();
+  if (!name || !email) return;
+
+  state.user = { name: name, email: email };
+
+  if (hasPlayedToday(email)) {
+    showReturnScreen(name, email);
+    return;
+  }
+
+  state.reward = pickReward();
+  state.code   = state.reward.noReward ? null : makeCode();
+  saveEntry(name, email, state.reward, state.code);
+
+  /* Prep scratch card content before showing game screen */
+  document.getElementById('sc-icon').textContent  = state.reward.icon;
+  document.getElementById('sc-label').textContent = state.reward.label;
+
+  showScreen('screen-game');
+
+  /* Init scratch card after transition completes */
+  setTimeout(function() {
+    var canvas = document.getElementById('scratch-canvas');
+    state.scratchCard = new ScratchCard(canvas, function() {
+      showResultScreen();
+    });
+    /* Show "tap to reveal" fallback after 8 seconds */
+    setTimeout(function() {
+      document.getElementById('tap-reveal-btn').style.display = 'block';
+    }, 8000);
+  }, 400);
+});
+
+/* ===========================================================
+   FLOW: SHOW RESULT
+=========================================================== */
+function showResultScreen() {
+  var r = state.reward;
+
+  document.getElementById('res-icon').textContent  = r.icon;
+  document.getElementById('res-label').textContent = r.label;
+  document.getElementById('rare-badge').style.display = r.rare ? 'block' : 'none';
+
+  var couponBox = document.getElementById('coupon-box');
+  if (r.noReward) {
+    couponBox.style.display = 'none';
+  } else {
+    couponBox.style.display = 'block';
+    document.getElementById('coupon-code').textContent = state.code;
+    document.getElementById('coupon-exp').textContent  =
+      'Valable aujourd\'hui · ' + new Date().toLocaleDateString('fr-FR') + ' · Montre ce code au comptoir';
+  }
+
+  buildSocials('res-socials');
+  showScreen('screen-result');
+
+  if (!r.noReward) {
+    setTimeout(launchConfetti, 250);
+    if (navigator.vibrate) navigator.vibrate([80, 40, 180, 40, 80]);
+  }
+}
+
+/* ===========================================================
+   FLOW: SHOW RETURN (already played)
+=========================================================== */
+function showReturnScreen(name, email) {
+  var streak = getStreak(email);
+  var pill   = document.getElementById('streak-pill');
+  if (streak >= 2) {
+    pill.style.display = 'inline-flex';
+    document.getElementById('streak-val').textContent = streak;
+  } else {
+    pill.style.display = 'none';
+  }
+
+  buildSocials('ret-socials');
+  showScreen('screen-return');
+  updateTimer();
+  setInterval(updateTimer, 60000);
+}
+
+/* ===========================================================
+   ADMIN
+=========================================================== */
+document.getElementById('btn-admin-login').addEventListener('click', function() {
+  var pwd = document.getElementById('admin-pwd').value;
+  if (pwd === SHOP_CONFIG.adminPassword) {
+    renderAdmin();
+    showScreen('screen-admin');
+    document.getElementById('admin-pwd').value = '';
+  } else {
+    toast('Mot de passe incorrect');
+    document.getElementById('admin-pwd').value = '';
+  }
+});
+
+/* Secret admin access: type "adm" on keyboard */
+var keyBuf = '';
+document.addEventListener('keydown', function(e) {
+  keyBuf = (keyBuf + e.key).slice(-3);
+  if (keyBuf === 'adm') { showScreen('screen-admin-login'); keyBuf = ''; }
+});
+
+/* Long-press on Kiff footer (mobile) → admin login */
+var lpTimer;
+var footer = document.getElementById('kiff-footer');
+footer.addEventListener('touchstart',  function() { lpTimer = setTimeout(function() { showScreen('screen-admin-login'); }, 1500); });
+footer.addEventListener('touchend',   function() { clearTimeout(lpTimer); });
+footer.addEventListener('touchcancel',function() { clearTimeout(lpTimer); });
+
+function renderAdmin() {
+  var pars  = getData().participants || [];
+  var today = new Date().toDateString();
+
+  document.getElementById('a-total').textContent  = pars.length;
+  document.getElementById('a-emails').textContent = [... new Set(pars.map(function(p){return p.email;}))].length;
+  document.getElementById('a-today').textContent  = pars.filter(function(p){ return new Date(p.date).toDateString() === today; }).length;
+
+  var tbody = document.getElementById('admin-tbody');
+  if (!pars.length) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:2rem">Aucune participation pour l\'instant</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = pars.slice().reverse().map(function(p) {
+    return '<tr>' +
+      '<td>' + esc(p.name) + '</td>' +
+      '<td style="font-size:.76rem">' + esc(p.email) + '</td>' +
+      '<td>' + esc(p.reward) + '</td>' +
+      '<td style="color:var(--accent);font-weight:700">' + (p.code || '—') + '</td>' +
+      '<td style="color:var(--muted)">' + new Date(p.date).toLocaleDateString('fr-FR') + '</td>' +
+    '</tr>';
+  }).join('');
+}
+
+function exportJSON() {
+  var json = JSON.stringify(getData(), null, 2);
+  var blob = new Blob([json], { type: 'application/json' });
+  var url  = URL.createObjectURL(blob);
+  var a    = document.createElement('a');
+  a.href   = url;
+  a.download = 'kiff_' + SHOP_CONFIG.name.replace(/\s+/g,'_') + '_' + new Date().toISOString().split('T')[0] + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function copyEmails() {
+  var emails = [... new Set((getData().participants || []).map(function(p){return p.email;}))].join('\n');
+  if (!emails) { toast('Aucun email enregistré'); return; }
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(emails).then(function() { toast(emails.split('\n').length + ' emails copiés !'); });
+  } else { toast('Impossible — copie manuelle'); }
+}
+
+function clearAll() {
+  if (confirm('Supprimer toutes les données Kiff pour "' + SHOP_CONFIG.name + '" ?\nCette action est irréversible.')) {
+    localStorage.removeItem(DB_KEY);
+    toast('Données effacées');
+    renderAdmin();
+  }
+}
+
+/* ===========================================================
+   INIT
+=========================================================== */
+applyConfig();
+initParticles();
+</script>
+
+<!--
+=============================================================
+  KIFF — GUIDE D'INSTALLATION & QR CODES
+=============================================================
+
+  1. PERSONNALISATION
+     Modifie uniquement le bloc SHOP_CONFIG en haut du JS.
+     Chaque commerce = une copie du fichier avec son propre config.
+
+  2. MISE EN LIGNE
+     - Vercel / Netlify : drag-drop ce fichier HTML → URL générée
+     - GitHub Pages    : push dans /docs puis activer Pages
+     - Hébergeur web   : upload index.html via FTP
+
+  3. GÉNÉRER LES QR CODES (gratuit)
+     - va sur qrcode-monkey.com ou goqr.me
+     - colle l'URL de ta page (ex: https://ton-site.fr)
+     - télécharge en PNG haute résolution
+
+  4. IMPRIMER & AFFICHER
+     - Format recommandé : 10x10 cm (petite carte) ou A5 (table)
+     - Imprime sur Bristol ou demande un adhésif vinyl
+     - Emplacements : comptoir, tables, sacs, vitrine, ticket de caisse
+     - Texte à ajouter sous le QR : "Scanne et gagne une surprise !"
+
+  5. ADMIN
+     - Accès bureau : tape "adm" au clavier sur la page d'accueil
+     - Accès mobile : appui long (1.5s) sur "Propulsé par Kiff" en bas
+     - Mot de passe : défini dans adminPassword (CLAUDE.md non visible)
+
+  6. MULTI-COMMERCE (BLANC)
+     Chaque commerce = copie du fichier + SHOP_CONFIG adapté.
+     Héberge chaque copie sur un sous-domaine ou chemin différent.
+     Ex: tacos.ton-site.fr  /  barbershop.ton-site.fr
+
+  7. ÉVOLUTIONS SAAS FUTURES
+     - Backend Node.js ou Supabase pour données cross-device
+     - Dashboard multi-commerces centralisé
+     - Campagnes email automatiques (Brevo/Mailchimp)
+     - QR codes dynamiques (changement de récompenses à distance)
+     - Abonnement commerçant (SaaS mensuel)
+     - Analytics avancés (taux de retour, panier moyen)
+     - Intégration caisse (Lightspeed, SumUp, Zettle)
+
+=============================================================
+-->
+
+</body>
+</html>
