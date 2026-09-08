@@ -15,14 +15,18 @@ const defaultMoments = [
 ];
 
 const $ = (id) => document.getElementById(id);
+const storage = {
+  get(key){ try { return localStorage.getItem(key); } catch { return null; } },
+  set(key,value){ try { localStorage.setItem(key,value); } catch {} }
+};
 const screens = ['onboarding','home','moments','me'];
 let selectedPerson = null;
-let moments = JSON.parse(localStorage.getItem('vela-moments') || 'null') || defaultMoments;
-let state = JSON.parse(localStorage.getItem('vela-state') || 'null') || { onboarded:false, door:false, status:'around' };
+let moments = JSON.parse(storage.get('vela-moments') || 'null') || defaultMoments;
+let state = JSON.parse(storage.get('vela-state') || 'null') || { onboarded:false, door:false, status:'around' };
 
 function persist(){
-  localStorage.setItem('vela-state', JSON.stringify(state));
-  localStorage.setItem('vela-moments', JSON.stringify(moments));
+  storage.set('vela-state', JSON.stringify(state));
+  storage.set('vela-moments', JSON.stringify(moments));
 }
 
 function setScreen(name){
@@ -85,7 +89,7 @@ function showToast(text){
   const t = $('toast'); t.textContent = text; t.classList.remove('hidden');
   clearTimeout(showToast.timer); showToast.timer = setTimeout(()=>t.classList.add('hidden'), 2200);
 }
-function escapeHtml(v){ return String(v).replace(/[&<>'"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
+function escapeHtml(v){ return String(v).replace(/[&<>'"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt',"'":'&#39;','"':'&quot;'}[c])); }
 function pulseFromPerson(){
   if(!selectedPerson) return;
   const node = document.querySelector(`[data-person="${selectedPerson.id}"]`);
