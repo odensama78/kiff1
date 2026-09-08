@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
+  <meta name="theme-color" content="#f3efe7" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Vela" />
+  <title>Vela — stay close, quietly</title>
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div id="app" class="app-shell">
+    <section id="onboarding" class="screen onboarding" aria-label="Onboarding">
+      <div class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></div>
+      <div class="onboarding-copy">
+        <p class="eyebrow">VELA</p>
+        <h1>Stay close.<br/>Without keeping up.</h1>
+        <p class="lede">A private place for the people you love. Nothing waits for you here.</p>
+      </div>
+      <div class="onboarding-rules">
+        <div><strong>No unread counts.</strong><span>No backlog to clear.</span></div>
+        <div><strong>No read receipts.</strong><span>Silence means nothing.</span></div>
+        <div><strong>Only people.</strong><span>No feed. No followers.</span></div>
+      </div>
+      <button id="startBtn" class="primary-btn">Enter quietly</button>
+      <button id="demoSkip" class="text-btn">Preview with sample people</button>
+    </section>
+
+    <section id="home" class="screen home hidden" aria-label="Your people">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">YOUR ROOM</p>
+          <h2 id="dayGreeting">Good evening.</h2>
+        </div>
+        <button id="openDoorBtn" class="door-btn" aria-pressed="false">
+          <span class="door-dot"></span><span id="doorLabel">Door closed</span>
+        </button>
+      </header>
+      <main>
+        <div id="room" class="room" aria-label="People in your circle">
+          <div class="you-core" aria-label="You">
+            <div class="you-avatar">E</div>
+            <span>you</span>
+          </div>
+          <div class="orbit-line orbit-one"></div>
+          <div class="orbit-line orbit-two"></div>
+        </div>
+        <div class="ambient-note"><span id="ambientText">Nothing needs your attention.</span></div>
+      </main>
+      <nav class="bottom-nav" aria-label="Primary">
+        <button class="nav-item active" data-view="room"><span class="nav-glyph">○</span><span>Room</span></button>
+        <button class="nav-item" data-view="moments"><span class="nav-glyph">⌁</span><span>Moments</span></button>
+        <button class="nav-item" data-view="me"><span class="nav-glyph">·</span><span>You</span></button>
+      </nav>
+    </section>
+
+    <section id="moments" class="screen hidden" aria-label="Moments">
+      <header class="subbar">
+        <button class="back-home" aria-label="Back">←</button>
+        <div><p class="eyebrow">PASSING BY</p><h2>Moments</h2></div>
+        <div class="header-spacer"></div>
+      </header>
+      <main class="moments-stream" id="momentsStream"></main>
+      <p class="stream-end">That’s all. Nothing else to catch up on.</p>
+      <nav class="bottom-nav" aria-label="Primary">
+        <button class="nav-item" data-view="room"><span class="nav-glyph">○</span><span>Room</span></button>
+        <button class="nav-item active" data-view="moments"><span class="nav-glyph">⌁</span><span>Moments</span></button>
+        <button class="nav-item" data-view="me"><span class="nav-glyph">·</span><span>You</span></button>
+      </nav>
+    </section>
+
+    <section id="me" class="screen hidden" aria-label="Your presence">
+      <header class="subbar">
+        <button class="back-home" aria-label="Back">←</button>
+        <div><p class="eyebrow">YOUR PRESENCE</p><h2>You, right now</h2></div>
+        <div class="header-spacer"></div>
+      </header>
+      <main class="me-content">
+        <div class="presence-display">
+          <div id="selfPulse" class="self-pulse"></div>
+          <p id="selfStatusBig">around</p>
+          <span id="selfStatusSub">People can leave things. No reply expected.</span>
+        </div>
+        <div class="status-picker" id="statusPicker">
+          <button data-status="around"><span>around</span><small>normal, reachable eventually</small></button>
+          <button data-status="bubble"><span>in my bubble</span><small>low bandwidth, still close</small></button>
+          <button data-status="talk"><span>open to talk</span><small>calls and chats are welcome</small></button>
+          <button data-status="busy"><span>busy</span><small>living life, check later</small></button>
+          <button data-status="offline"><span>offline</span><small>away without explanation</small></button>
+        </div>
+        <div class="principle"><span>VELA RULE</span><p>Your status explains silence. It never apologizes for it.</p></div>
+      </main>
+      <nav class="bottom-nav" aria-label="Primary">
+        <button class="nav-item" data-view="room"><span class="nav-glyph">○</span><span>Room</span></button>
+        <button class="nav-item" data-view="moments"><span class="nav-glyph">⌁</span><span>Moments</span></button>
+        <button class="nav-item active" data-view="me"><span class="nav-glyph">·</span><span>You</span></button>
+      </nav>
+    </section>
+
+    <div id="personSheet" class="sheet-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="personName">
+      <div class="sheet person-sheet">
+        <button class="sheet-handle" id="closeSheet" aria-label="Close"></button>
+        <div class="person-head">
+          <div id="sheetAvatar" class="sheet-avatar"></div>
+          <div><h3 id="personName"></h3><p id="personStatus"></p></div>
+        </div>
+        <div id="personLast" class="last-moment"></div>
+        <div class="action-triad">
+          <button id="touchBtn" class="action-btn"><span class="action-symbol">~</span><strong>touch</strong><small>just thought of you</small></button>
+          <button id="dropBtn" class="action-btn"><span class="action-symbol">＋</span><strong>drop</strong><small>leave a little thing</small></button>
+          <button id="needBtn" class="action-btn urgent"><span class="action-symbol">!</span><strong>need</strong><small>please notice this</small></button>
+        </div>
+        <p class="sheet-footnote">Touch and drop never ask for a reply. “Need” is intentionally rare.</p>
+      </div>
+    </div>
+
+    <div id="composerSheet" class="sheet-backdrop hidden" role="dialog" aria-modal="true">
+      <div class="sheet composer-sheet">
+        <button class="sheet-handle" id="closeComposer" aria-label="Close"></button>
+        <p class="eyebrow">DROP FOR <span id="composerPerson"></span></p>
+        <textarea id="dropText" maxlength="180" placeholder="a thought, a detail, something small…"></textarea>
+        <div class="composer-meta"><span>No reply expected</span><span id="charCount">0/180</span></div>
+        <div class="composer-tools">
+          <button id="photoStub" aria-label="Photo">□ photo</button>
+          <button id="voiceStub" aria-label="Voice">◌ voice</button>
+          <button id="sendDrop" class="send-drop">leave it here</button>
+        </div>
+      </div>
+    </div>
+    <div id="toast" class="toast hidden" role="status"></div>
+  </div>
+  <script src="./app.js"></script>
+</body>
+</html>
