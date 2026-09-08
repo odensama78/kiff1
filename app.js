@@ -89,7 +89,7 @@ function showToast(text){
   const t = $('toast'); t.textContent = text; t.classList.remove('hidden');
   clearTimeout(showToast.timer); showToast.timer = setTimeout(()=>t.classList.add('hidden'), 2200);
 }
-function escapeHtml(v){ return String(v).replace(/[&<>'"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt',"'":'&#39;','"':'&quot;'}[c])); }
+function escapeHtml(v){ return String(v).replace(/[&<>'"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
 function pulseFromPerson(){
   if(!selectedPerson) return;
   const node = document.querySelector(`[data-person="${selectedPerson.id}"]`);
